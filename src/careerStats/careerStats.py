@@ -9,6 +9,7 @@ def handler(event, context):
 
     for url in urls:
         response = requests.get(url)
+        print(f"{url} returned: {response.status_code}")
 
 
 
