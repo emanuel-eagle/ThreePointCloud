@@ -5,7 +5,7 @@ import json
 
 def handler(event, context):
 
-    urls = json.loads(event)
+    urls = event.get('urls', [])
 
     for url in urls:
         response = requests.get(url)
