@@ -130,6 +130,8 @@ func HandleRequest(ctx context.Context, request Request) (MyResponse, error) {
 	var urls = request.URLs
 	playerCount = 0 // Reset count for each invocation
 
+	fmt.Println(urls)
+
 	var wg sync.WaitGroup
 	var countMutex sync.Mutex
 
