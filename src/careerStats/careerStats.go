@@ -52,6 +52,7 @@ type MyResponse struct {
 
 var dbClient *dynamodb.Client
 var playerCount int
+var successfulPuts int
 
 // Initialize the DynamoDB client
 func init() {
@@ -77,7 +78,9 @@ func addPlayerToDynamoDB(player Player, ctx context.Context) error {
 	if err != nil {
 		return fmt.Errorf("failed to put item: %w", err)
 	}
-
+	successMessage := fmt.Sprintf("successfully added: %s", player.Player_id)
+	successfulPuts++
+	fmt.Println(successMessage)
 	return nil
 }
 
@@ -129,8 +132,7 @@ func HandleRequest(ctx context.Context, request Request) (MyResponse, error) {
 
 	var urls = request.URLs
 	playerCount = 0 // Reset count for each invocation
-
-	fmt.Println(urls)
+	successfulPuts = 0
 
 	var wg sync.WaitGroup
 	var countMutex sync.Mutex
@@ -145,7 +147,7 @@ func HandleRequest(ctx context.Context, request Request) (MyResponse, error) {
 
 	return MyResponse{
 		Message: "Successfully scraped basketball players",
-		Count:   playerCount,
+		Count:   successfulPuts,
 	}, nil
 }
 
