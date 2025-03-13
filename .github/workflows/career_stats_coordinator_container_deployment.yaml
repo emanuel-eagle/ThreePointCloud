@@ -8,7 +8,7 @@ on:
 
 env:
   AWS_REGION: us-east-2                # Change this to your region
-  ECR_REPOSITORY: ${{ secrets.AWS_ECR_REPO_CAREER_STATS  }}    # Change this to your repository name
+  ECR_REPOSITORY: ${{ secrets.AWS_ECR_REPO_CAREER_STATS_COORDINATOR  }}    # Change this to your repository name
   IMAGE_TAG: ${{ github.sha }}         # Uses commit SHA as tag
 jobs:
   deploy:

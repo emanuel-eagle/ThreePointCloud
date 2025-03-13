@@ -1,8 +1,14 @@
 import boto3
+import os
+
+TABLE = os.environ["TABLE_NAME"]
 
 def handler(event, context):
-    # Your code here
+    client = boto3.client('dynamodb')
+    print(TABLE)
+    dynamodb_response = client.scan(TABLE)
+
     return {
         'statusCode': 200,
-        'body': 'Function executed successfully!'
+        'body': dynamodb_response
     }
