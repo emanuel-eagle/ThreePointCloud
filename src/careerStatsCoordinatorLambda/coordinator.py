@@ -29,7 +29,7 @@ def handler(event, context):
     
     items = dynamodb_response["Items"]
 
-    urls = [item[HASH_KEY["S"]] for item in items]
+    urls = [item[HASH_KEY]["S"] for item in items]
 
     chunks = split_list_into_chunks(urls)
 
