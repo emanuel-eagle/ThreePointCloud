@@ -3,6 +3,8 @@ name: Deploy to AWS ECR
 on:
   pull_request:
     branches: [ "main" ]
+    paths:
+      - 'src/playerList/**'
 
 env:
   AWS_REGION: us-east-2                # Change this to your region

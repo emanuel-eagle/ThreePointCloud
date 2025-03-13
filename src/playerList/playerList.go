@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"strings"
 	"sync"
 
 	"github.com/aws/aws-lambda-go/lambda"
@@ -22,7 +23,9 @@ type Player struct {
 	Position  string `dynamodbav:"position"`
 	Height    string `dynamodbav:"height"`
 	Weight    string `dynamodbav:"weight"`
-	DOB       string `dynamodbav:"dob"`
+	DOB_Month string `dynamodbav:"dob_month"`
+	DOB_Day   string `dynamodbav:"dob_day"`
+	DOB_Year  string `dynamodbav:"dob_year"`
 	College   string `dynamodbav:"college"`
 }
 
@@ -80,7 +83,9 @@ func getPlayers(url string, ctx context.Context, wg *sync.WaitGroup, countMutex 
 			Position:  e.ChildText("td[data-stat='pos']"),
 			Height:    e.ChildText("td[data-stat='height']"),
 			Weight:    e.ChildText("td[data-stat='weight']"),
-			DOB:       e.ChildText("td[data-stat='birth_date']"),
+			DOB_Month: strings.Split(e.ChildText("td[data-stat='birth_date']"), " ")[0],
+			DOB_Day:   strings.Split(strings.Split(e.ChildText("td[data-stat='birth_date']"), " ")[1], ",")[0],
+			DOB_Year:  strings.Split(strings.Split(e.ChildText("td[data-stat='birth_date']"), " ")[1], ",")[1],
 			College:   e.ChildText("td[data-stat='colleges']"),
 		}
 		if player.Name != "" {
