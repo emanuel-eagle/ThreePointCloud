@@ -125,6 +125,11 @@ func getPlayerData(url string, ctx context.Context, wg *sync.WaitGroup, countMut
 		}
 	})
 
+	c.OnResponse(func(r *colly.Response) {
+		statusCode := r.StatusCode
+		fmt.Printf("Status code: %d for URL: %s\n", statusCode, r.Request.URL)
+	})
+
 	c.Visit(url)
 }
 
