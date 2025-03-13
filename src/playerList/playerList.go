@@ -3,21 +3,26 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
 	"sync"
 
 	"github.com/aws/aws-lambda-go/lambda"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
+	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/gocolly/colly/v2"
 )
 
 type Player struct {
-	Name     string
-	From     string
-	To       string
-	Position string
-	Height   string
-	Weight   string
-	DOB      string
-	College  string
+	Name     string `dynamodbav:"name"`
+	From     string `dynamodbav:"from_year"`
+	To       string `dynamodbav:"to_year"`
+	Position string `dynamodbav:"position"`
+	Height   string `dynamodbav:"height"`
+	Weight   string `dynamodbav:"weight"`
+	DOB      string `dynamodbav:"dob"`
+	College  string `dynamodbav:"college"`
 }
 
 // Lambda event structure
@@ -31,7 +36,38 @@ type MyResponse struct {
 	Count   int    `json:"count"`
 }
 
-func getPlayers(url string, wg *sync.WaitGroup) {
+var dbClient *dynamodb.Client
+var playerCount int
+
+// Initialize the DynamoDB client
+func init() {
+	cfg, err := config.LoadDefaultConfig(context.Background())
+	if err != nil {
+		log.Fatalf("unable to load SDK config, %v", err)
+	}
+	dbClient = dynamodb.NewFromConfig(cfg)
+}
+
+func addPlayerToDynamoDB(player Player, ctx context.Context) error {
+	// Marshal the player to DynamoDB attribute values
+	av, err := attributevalue.MarshalMap(player)
+	if err != nil {
+		return fmt.Errorf("failed to marshal player: %w", err)
+	}
+
+	// Put the item in DynamoDB
+	_, err = dbClient.PutItem(ctx, &dynamodb.PutItemInput{
+		TableName: aws.String("player-database"),
+		Item:      av,
+	})
+	if err != nil {
+		return fmt.Errorf("failed to put item: %w", err)
+	}
+
+	return nil
+}
+
+func getPlayers(url string, ctx context.Context, wg *sync.WaitGroup, countMutex *sync.Mutex) {
 	defer wg.Done()
 	c := colly.NewCollector()
 	c.OnHTML("table#players tbody tr", func(e *colly.HTMLElement) {
@@ -45,7 +81,18 @@ func getPlayers(url string, wg *sync.WaitGroup) {
 			DOB:      e.ChildText("td[data-stat='birth_date']"),
 			College:  e.ChildText("td[data-stat='colleges']"),
 		}
-		fmt.Println(player) //test
+		if player.Name != "" {
+			// Add player to DynamoDB right away
+			err := addPlayerToDynamoDB(player, ctx)
+			if err != nil {
+				log.Printf("Error adding player %s: %v", player.Name, err)
+			} else {
+				// Increment the player count safely
+				countMutex.Lock()
+				playerCount++
+				countMutex.Unlock()
+			}
+		}
 	})
 	c.Visit(url)
 }
@@ -53,24 +100,26 @@ func getPlayers(url string, wg *sync.WaitGroup) {
 func HandleRequest(ctx context.Context, event MyEvent) (MyResponse, error) {
 
 	var urls []string
+	playerCount = 0 // Reset count for each invocation
 
 	for r := 'a'; r <= 'z'; r++ {
 		urls = append(urls, fmt.Sprintf("https://www.basketball-reference.com/players/%s/", string(r)))
 	}
 
 	var wg sync.WaitGroup
+	var countMutex sync.Mutex
 
 	wg.Add(len(urls))
 
 	for _, url := range urls {
-		go getPlayers(url, &wg)
+		go getPlayers(url, ctx, &wg, &countMutex)
 	}
 
 	wg.Wait()
 
 	return MyResponse{
 		Message: "Successfully scraped basketball players",
-		Count:   1,
+		Count:   playerCount,
 	}, nil
 }
 
