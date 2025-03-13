@@ -66,7 +66,7 @@ resource "aws_lambda_function" "threepointcloud_careerstats_coordinator_collecti
   environment {
     variables = {
         TABLE_NAME = aws_dynamodb_table.dynamodb-table.name
-        HASH_KEY = aws_dynamodb_table.dynamodb-table.name
+        HASH_KEY = aws_dynamodb_table.dynamodb-table.hash_key
         CAREER_STATS_LAMBDA = aws_lambda_function.threepointcloud_careerstats_collection.arn
     }
   }
