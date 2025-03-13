@@ -44,6 +44,11 @@ variable lambda_image_tag_careerStatsCoordinatorLambda {
     type = string
 }
 
+variable chunk_size {
+    type = string
+    default = "200"
+}
+
 resource "aws_lambda_function" "threepointcloud_playerlist_collection" {
   function_name = var.lambda_function_name
   role          = aws_iam_role.iam_for_lambda.arn
@@ -74,6 +79,7 @@ resource "aws_lambda_function" "threepointcloud_careerstats_coordinator_collecti
         TABLE_NAME = aws_dynamodb_table.dynamodb-table.name
         HASH_KEY = aws_dynamodb_table.dynamodb-table.hash_key
         CAREER_STATS_LAMBDA = aws_lambda_function.threepointcloud_careerstats_collection.arn
+        CHUNK_SIZE = var.chunk_size
     }
   }
 }
