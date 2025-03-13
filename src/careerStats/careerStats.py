@@ -7,7 +7,10 @@ def handler(event, context):
 
     urls = json.loads(event)
 
-    print(urls)
+    for url in urls:
+        response = requests.get(url)
+        print(f"{url} returned: {response.status_code}")
+
 
 
     return {
