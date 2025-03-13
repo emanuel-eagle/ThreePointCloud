@@ -16,10 +16,8 @@ variable lambda_function_name_career_stats_coordinator {
     default = "threepointcloud-careerstats-coordinator"
 }
 
-
-
 variable lambda_timeout {
-    default = 30
+    default = 120
 }
 
 variable career_stats_lambda_timeout {
