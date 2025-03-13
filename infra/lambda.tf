@@ -65,7 +65,7 @@ resource "aws_lambda_function" "threepointcloud_careerstats_coordinator_collecti
   memory_size = var.memory_size
   environment {
     variables = {
-        TABLE_NAME = aws_dynamodb_table.dynamodb-table.name
+        TABLE_NAME = aws_dynamodb_table.dynamodb-table-career-data.name
     }
   }
 }
