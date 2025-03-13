@@ -40,8 +40,8 @@ type Player struct {
 }
 
 // Lambda event structure
-type MyEvent struct {
-	// Can be empty or customize as needed
+type Request struct {
+	URLs []string `json:"urls"`
 }
 
 // Response from Lambda
@@ -82,6 +82,7 @@ func addPlayerToDynamoDB(player Player, ctx context.Context) error {
 }
 
 func getPlayerData(url string, ctx context.Context, wg *sync.WaitGroup, countMutex *sync.Mutex) {
+	defer wg.Done()
 	c := colly.NewCollector()
 
 	c.OnHTML("table#per_game_stats tbody tr", func(e *colly.HTMLElement) {
@@ -109,32 +110,25 @@ func getPlayerData(url string, ctx context.Context, wg *sync.WaitGroup, countMut
 			Points:                   e.ChildText("td[data-stat='pts_per_g']"),
 			Awards:                   e.ChildText("td[data-stat='awards']"),
 		}
-		if player.Name != "" {
-			// Add player to DynamoDB right away
-			err := addPlayerToDynamoDB(player, ctx)
-			if err != nil {
-				log.Printf("Error adding player %s: %v", player.Name, err)
-			} else {
-				// Increment the player count safely
-				countMutex.Lock()
-				playerCount++
-				countMutex.Unlock()
-			}
+		// Add player to DynamoDB right away
+		err := addPlayerToDynamoDB(player, ctx)
+		if err != nil {
+			log.Printf("Error adding player %s: %v", player.Player_id, err)
+		} else {
+			// Increment the player count safely
+			countMutex.Lock()
+			playerCount++
+			countMutex.Unlock()
 		}
-		fmt.Println(player)
 	})
 
 	c.Visit(url)
 }
 
-func HandleRequest(ctx context.Context, event MyEvent) (MyResponse, error) {
+func HandleRequest(ctx context.Context, request Request) (MyResponse, error) {
 
-	var urls []string
+	var urls = request.URLs
 	playerCount = 0 // Reset count for each invocation
-
-	for r := 'a'; r <= 'z'; r++ {
-		urls = append(urls, fmt.Sprintf("https://www.basketball-reference.com/players/%s/", string(r)))
-	}
 
 	var wg sync.WaitGroup
 	var countMutex sync.Mutex
