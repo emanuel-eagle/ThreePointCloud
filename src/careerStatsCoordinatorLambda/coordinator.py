@@ -17,7 +17,7 @@ def handler(event, context):
 
     for item in items:
         url = item[HASH_KEY]["S"]
-        print(url)
+        print("URL: ", url)
 
     return {
         'statusCode': 200,
