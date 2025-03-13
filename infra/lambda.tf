@@ -9,7 +9,7 @@ variable lambda_function_name {
 }
 
 variable lambda_timeout {
-    default = 300
+    default = 30
 }
 
 variable memory_size {
@@ -20,7 +20,7 @@ variable lambda_image_tag {
     type = string
 }
 
-resource "aws_lambda_function" "weather_alerts_lambda_function" {
+resource "aws_lambda_function" "threepointcloud_playerlist_collection" {
   function_name = var.lambda_function_name
   role          = aws_iam_role.iam_for_lambda.arn
   image_uri     = "${aws_ecr_repository.three-point-cloud-player-list-container-repository.repository_url}:${var.lambda_image_tag}"
