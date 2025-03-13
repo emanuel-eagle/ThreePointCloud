@@ -1,1 +1,1 @@
-lambda_image_tag_careerStatsCoordinatorLambda = "b6c47c41f4cfdb15eafe07583fdc2eda065578c7"
+lambda_image_tag_careerStatsCoordinatorLambda = "c43ee6a2a053bbb2aa01e29b36430d9640dba54f"
