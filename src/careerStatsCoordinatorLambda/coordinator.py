@@ -13,7 +13,7 @@ def handler(event, context):
                                         '#hashKey': HASH_KEY
                                     })
     
-    items = dynamodb_response["body"]
+    items = dynamodb_response["Items"]
 
     for item in items:
         url = item[HASH_KEY]["S"]
