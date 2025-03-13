@@ -1,4 +1,4 @@
-name: Deploy to AWS ECR
+name: Deploy Career Stats Collector to AWS ECR
 
 on:
   pull_request:
