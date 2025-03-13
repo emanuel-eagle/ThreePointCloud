@@ -3,7 +3,7 @@ FROM golang:latest AS build
 WORKDIR /app
 
 # Copy source code
-COPY playerList.go ./script.go
+COPY src/playerList/playerList.go ./script.go
 
 # Initialize Go module and get dependencies
 RUN go mod init project
