@@ -12,8 +12,14 @@ def handler(event, context):
                                     ExpressionAttributeNames={
                                         '#hashKey': HASH_KEY
                                     })
+    
+    items = dynamodb_response["body"]
+
+    for item in items:
+        url = item[HASH_KEY]["S"]
+        print(url)
 
     return {
         'statusCode': 200,
-        'body': dynamodb_response
+        'body': "success"
     }
