@@ -8,7 +8,10 @@ def handler(event, context):
     client = boto3.client('dynamodb')
     print(TABLE)
     dynamodb_response = client.scan(TableName = TABLE,
-                                    ProjectionExpression = HASH_KEY)
+                                    ProjectionExpression='#hashKey',
+                                    ExpressionAttributeNames={
+                                        '#hashKey': HASH_KEY
+                                    })
 
     return {
         'statusCode': 200,
