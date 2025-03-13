@@ -5,8 +5,9 @@ import os
 TABLE = os.environ["TABLE_NAME"]
 HASH_KEY = os.environ["HASH_KEY"]
 CAREER_STATS_LAMBDA = os.environ["CAREER_STATS_LAMBDA"]
+CHUNK_SIZE = int(os.environ["CHUNK_SIZE"])
 
-def split_list_into_chunks(items, target_chunk_size=500):
+def split_list_into_chunks(items, target_chunk_size=CHUNK_SIZE):
     # Calculate how many chunks we need
     num_chunks = max(1, (len(items) + target_chunk_size - 1) // target_chunk_size)
     
