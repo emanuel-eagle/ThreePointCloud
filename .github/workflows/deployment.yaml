@@ -1,0 +1,51 @@
+name: Deploy to AWS ECR
+
+on:
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  AWS_REGION: us-east-2                # Change this to your region
+  ECR_REPOSITORY: ${{ secrets.AWS_ECR_REPO  }}    # Change this to your repository name
+  IMAGE_TAG: ${{ github.sha }}         # Uses commit SHA as tag
+jobs:
+  deploy:
+    name: Deploy to ECR
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+      with:
+        ref: ${{ github.head_ref }}
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ secrets.AWS_REGION }}
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Build, tag, and push image to Amazon ECR
+      run: |
+        # Build Docker image
+        docker build -t $ECR_REPOSITORY:${{ github.sha }} -f ./src/playerList/Dockerfile .
+        
+        # Push images to ECR
+        docker push $ECR_REPOSITORY:${{ github.sha }}
+    - name: Update auto.tfvars file to point to new lambda image tag
+      run: |
+        echo "lambda_image_tag = \"${{ github.sha }}\"" > infra/playerList.auto.tfvars
+      
+    - name: Push tfvars
+      uses: EndBug/add-and-commit@v9
+      with:
+        add: "infra/playerList.auto.tfvars"
+        message: "updating image tag"
+        default_author: github_actions
+        github_token: ${{ secrets.PAT_TOKEN }}  # Use a Personal Access Token with repo scope
