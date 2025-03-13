@@ -6,7 +6,7 @@ WORKDIR /app
 COPY src/playerList/playerList.go ./script.go
 
 # Initialize Go module and get dependencies
-RUN go mod init project
+RUN go mod init player_lister
 RUN go get -u github.com/gocolly/colly/v2
 RUN go get -u github.com/aws/aws-lambda-go/lambda
 RUN go get -u github.com/aws/aws-sdk-go-v2

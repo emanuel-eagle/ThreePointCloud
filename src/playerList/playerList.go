@@ -70,7 +70,7 @@ func HandleRequest(ctx context.Context, event MyEvent) (MyResponse, error) {
 
 	return MyResponse{
 		Message: "Successfully scraped basketball players",
-		Count:   len(players),
+		Count:   1,
 	}, nil
 }
 
