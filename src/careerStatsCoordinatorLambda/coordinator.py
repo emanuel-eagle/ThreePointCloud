@@ -42,10 +42,10 @@ def handler(event, context):
         }
         response = lambda_client.invoke(
             FunctionName = CAREER_STATS_LAMBDA,
-            InvocationType = "RequestResponse",
+            InvocationType = "Event",
             Payload = json.dumps(payload)
         )
-        
+
         print(response)
 
 
