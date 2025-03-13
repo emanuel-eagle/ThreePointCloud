@@ -20,6 +20,17 @@ type Player struct {
 	College  string
 }
 
+// Lambda event structure
+type MyEvent struct {
+	// Can be empty or customize as needed
+}
+
+// Response from Lambda
+type MyResponse struct {
+	Message string `json:"message"`
+	Count   int    `json:"count"`
+}
+
 func getPlayers(url string, wg *sync.WaitGroup) {
 	defer wg.Done()
 	c := colly.NewCollector()
@@ -34,7 +45,7 @@ func getPlayers(url string, wg *sync.WaitGroup) {
 			DOB:      e.ChildText("td[data-stat='birth_date']"),
 			College:  e.ChildText("td[data-stat='colleges']"),
 		}
-		fmt.Println(player)
+		fmt.Println(player) //test
 	})
 	c.Visit(url)
 }
@@ -56,6 +67,11 @@ func HandleRequest(ctx context.Context, event MyEvent) (MyResponse, error) {
 	}
 
 	wg.Wait()
+
+	return MyResponse{
+		Message: "Successfully scraped basketball players",
+		Count:   1,
+	}, nil
 }
 
 func main() {

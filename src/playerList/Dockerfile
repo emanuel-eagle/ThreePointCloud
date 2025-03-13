@@ -3,20 +3,20 @@ FROM golang:latest AS build
 WORKDIR /app
 
 # Copy source code
-COPY playerList.go ./script.go
+COPY src/playerList/playerList.go ./script.go
 
 # Initialize Go module and get dependencies
-RUN go mod init project
-RUN go get github.com/gocolly/colly/v2
-RUN go get github.com/aws/aws-lambda-go/lambda
-RUN go get github.com/aws/aws-sdk-go-v2/aws
-RUN go get github.com/aws/aws-sdk-go-v2/config
-RUN go get github.com/aws/aws-sdk-go-v2/service/dynamodb
-RUN go get github.com/aws/aws-sdk-go-v2/service/dynamodb/types
+RUN go mod init player_lister
+RUN go get -u github.com/gocolly/colly/v2
+RUN go get -u github.com/aws/aws-lambda-go/lambda
+RUN go get -u github.com/aws/aws-sdk-go-v2
+RUN go get -u github.com/aws/aws-sdk-go-v2/config
+RUN go get -u github.com/aws/aws-sdk-go-v2/service/dynamodb
+RUN go get -u github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue
 RUN go mod tidy
 
 # Build the binary
-RUN CGO_ENABLED=0 GOOS=linux go build -o main script.go
+RUN CGO_ENABLED=0 GOOS=linux go build -v -o main ./script.go
 
 # Lambda stage
 FROM public.ecr.aws/lambda/go:1
