@@ -15,14 +15,15 @@ import (
 )
 
 type Player struct {
-	Name     string `dynamodbav:"name"`
-	From     string `dynamodbav:"from_year"`
-	To       string `dynamodbav:"to_year"`
-	Position string `dynamodbav:"position"`
-	Height   string `dynamodbav:"height"`
-	Weight   string `dynamodbav:"weight"`
-	DOB      string `dynamodbav:"dob"`
-	College  string `dynamodbav:"college"`
+	Player_id string `dynamodbav:"player-id"`
+	Name      string `dynamodbav:"name"`
+	From      string `dynamodbav:"from_year"`
+	To        string `dynamodbav:"to_year"`
+	Position  string `dynamodbav:"position"`
+	Height    string `dynamodbav:"height"`
+	Weight    string `dynamodbav:"weight"`
+	DOB       string `dynamodbav:"dob"`
+	College   string `dynamodbav:"college"`
 }
 
 // Lambda event structure
@@ -72,14 +73,15 @@ func getPlayers(url string, ctx context.Context, wg *sync.WaitGroup, countMutex 
 	c := colly.NewCollector()
 	c.OnHTML("table#players tbody tr", func(e *colly.HTMLElement) {
 		player := Player{
-			Name:     e.ChildText("th[data-stat='player']"),
-			From:     e.ChildText("td[data-stat='year_min']"),
-			To:       e.ChildText("td[data-stat='year_max']"),
-			Position: e.ChildText("td[data-stat='pos']"),
-			Height:   e.ChildText("td[data-stat='height']"),
-			Weight:   e.ChildText("td[data-stat='weight']"),
-			DOB:      e.ChildText("td[data-stat='birth_date']"),
-			College:  e.ChildText("td[data-stat='colleges']"),
+			Player_id: fmt.Sprintf("%s_%s", e.ChildText("th[data-stat='player']"), e.ChildText("td[data-stat='year_min']")),
+			Name:      e.ChildText("th[data-stat='player']"),
+			From:      e.ChildText("td[data-stat='year_min']"),
+			To:        e.ChildText("td[data-stat='year_max']"),
+			Position:  e.ChildText("td[data-stat='pos']"),
+			Height:    e.ChildText("td[data-stat='height']"),
+			Weight:    e.ChildText("td[data-stat='weight']"),
+			DOB:       e.ChildText("td[data-stat='birth_date']"),
+			College:   e.ChildText("td[data-stat='colleges']"),
 		}
 		if player.Name != "" {
 			// Add player to DynamoDB right away
