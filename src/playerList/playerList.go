@@ -85,7 +85,7 @@ func getPlayers(url string, ctx context.Context, wg *sync.WaitGroup, countMutex 
 			Weight:    e.ChildText("td[data-stat='weight']"),
 			DOB_Month: strings.Split(e.ChildText("td[data-stat='birth_date']"), " ")[0],
 			DOB_Day:   strings.Split(strings.Split(e.ChildText("td[data-stat='birth_date']"), " ")[1], ",")[0],
-			DOB_Year:  strings.Split(strings.Split(e.ChildText("td[data-stat='birth_date']"), " ")[1], ",")[1],
+			DOB_Year:  strings.Split(e.ChildText("td[data-stat='birth_date']"), " ")[2],
 			College:   e.ChildText("td[data-stat='colleges']"),
 		}
 		if player.Name != "" {
