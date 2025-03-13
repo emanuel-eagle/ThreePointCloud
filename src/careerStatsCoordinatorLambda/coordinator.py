@@ -1,8 +1,10 @@
 import boto3
+import json
 import os
 
 TABLE = os.environ["TABLE_NAME"]
 HASH_KEY = os.environ["HASH_KEY"]
+CAREER_STATS_LAMBDA = os.environ["CAREER_STATS_LAMBDA"]
 
 def split_list_into_chunks(items, target_chunk_size=500):
     # Calculate how many chunks we need
@@ -19,9 +21,9 @@ def split_list_into_chunks(items, target_chunk_size=500):
     return result
 
 def handler(event, context):
-    client = boto3.client('dynamodb')
-    print(TABLE)
-    dynamodb_response = client.scan(TableName = TABLE,
+    dynamodb_client = boto3.client('dynamodb')
+    lambda_client = boto3.client('lambda')
+    dynamodb_response = dynamodb_client.scan(TableName = TABLE,
                                     ProjectionExpression='#hashKey',
                                     ExpressionAttributeNames={
                                         '#hashKey': HASH_KEY
@@ -34,7 +36,16 @@ def handler(event, context):
     chunks = split_list_into_chunks(urls)
 
     for chunk in chunks:
-        print(len(chunk))
+        payload = {
+            'urls' : chunk
+        }
+        response = lambda_client.invoke(
+            FunctionName = CAREER_STATS_LAMBDA,
+            InvocationType = "RequestResponse",
+            Payload = json.dumps(payload)
+        )
+        print(response)
+
 
     return {
         'statusCode': 200,
