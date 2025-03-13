@@ -44,6 +44,7 @@ def handler(event, context):
             InvocationType = "RequestResponse",
             Payload = json.dumps(payload)
         )
+        print(chunk)
         print(response)
 
 
