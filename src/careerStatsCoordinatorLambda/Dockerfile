@@ -6,4 +6,4 @@ RUN pip install boto3
 COPY src/careerStatsCoordinatorLambda/coordinator.py ${LAMBDA_TASK_ROOT}
 
 # Set the CMD to your handler
-CMD [ "app.handler" ]
+CMD [ "coordinator.handler" ]
