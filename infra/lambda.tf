@@ -13,7 +13,7 @@ variable lambda_timeout {
 }
 
 variable memory_size {
-    default = 1024
+    default = 512
 }
 
 variable lambda_image_tag {
