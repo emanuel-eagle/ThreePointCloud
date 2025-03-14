@@ -30,9 +30,11 @@ def handler(event, context):
         time.sleep(random.random())
         response = requests.get(url, headers = {'User-agent': user_agents[random.randint(0, len(user_agents)-1)]})
         soup = BeautifulSoup(response.text, "html.parser")
-        print(url)
         table = soup.find(id = "per_game_stats")
-        tbody = table.find("tbody")
+        try:
+            tbody = table.find("tbody")
+        except AttributeError:
+            print(url)
         for tr in tbody.find_all("tr"):
             td_list = tr.find_all("td")
             did_not_play = False
