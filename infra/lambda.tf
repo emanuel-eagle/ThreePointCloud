@@ -134,8 +134,8 @@ resource "aws_lambda_function" "threepointcloud_gamestats_collector" {
   memory_size = var.career_stats_lambda_memory_size
   environment {
     variables = {
-        TABLE_NAME = aws_dynamodb_table.dynamodb-table-gamelog-data.name
-        HASH_KEY = aws_dynamodb_table.dynamodb-table-gamelog-data.hash_key
+        TABLE_NAME = aws_dynamodb_table.dynamodb-table-career-data.name
+        HASH_KEY = aws_dynamodb_table.dynamodb-table-career-data.hash_key
         GAME_STATS_LAMBDA = aws_lambda_function.threepointcloud_gamestats_collection.arn
         CHUNK_SIZE = var.gamelog_chunk_size
     }
