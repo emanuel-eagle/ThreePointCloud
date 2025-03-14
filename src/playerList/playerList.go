@@ -58,7 +58,7 @@ func addPlayerToDynamoDB(player Player, ctx context.Context) error {
 
 	// Put the item in DynamoDB
 	_, err = dbClient.PutItem(ctx, &dynamodb.PutItemInput{
-		TableName: aws.String("player-database"),
+		TableName: aws.String("celtics-player-database"),
 		Item:      av,
 	})
 	if err != nil {
@@ -71,17 +71,12 @@ func addPlayerToDynamoDB(player Player, ctx context.Context) error {
 func getPlayers(url string, ctx context.Context, wg *sync.WaitGroup, countMutex *sync.Mutex) {
 	defer wg.Done()
 	c := colly.NewCollector()
-	c.OnHTML("table#players tbody tr", func(e *colly.HTMLElement) {
+	c.OnHTML("table#franchise_register tbody tr", func(e *colly.HTMLElement) {
 		player := Player{
-			Player_id: fmt.Sprintf("https://www.basketball-reference.com%s", e.ChildAttr("th[data-stat='player'] a", "href")),
+			Player_id: fmt.Sprintf("https://www.basketball-reference.com%s", e.ChildAttr("td[data-stat='player'] a", "href")),
 			Name:      e.ChildText("th[data-stat='player']"),
 			From:      e.ChildText("td[data-stat='year_min']"),
 			To:        e.ChildText("td[data-stat='year_max']"),
-			Position:  e.ChildText("td[data-stat='pos']"),
-			Height:    e.ChildText("td[data-stat='height']"),
-			Weight:    e.ChildText("td[data-stat='weight']"),
-			DOB:       e.ChildText("td[data-stat='birth_date']"),
-			College:   e.ChildText("td[data-stat='colleges']"),
 		}
 		if player.Name != "" {
 			// Add player to DynamoDB right away
@@ -104,9 +99,7 @@ func HandleRequest(ctx context.Context, event MyEvent) (MyResponse, error) {
 	var urls []string
 	playerCount = 0 // Reset count for each invocation
 
-	for r := 'a'; r <= 'z'; r++ {
-		urls = append(urls, fmt.Sprintf("https://www.basketball-reference.com/players/%s/", string(r)))
-	}
+	urls = ["https://www.basketball-reference.com/teams/BOS/players.html"]
 
 	var wg sync.WaitGroup
 	var countMutex sync.Mutex
