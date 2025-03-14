@@ -69,7 +69,7 @@ func getPlayers(url string, ctx context.Context, wg *sync.WaitGroup, countMutex 
 	c.OnHTML("table#franchise_register tbody tr", func(e *colly.HTMLElement) {
 		player := Player{
 			Player_id: fmt.Sprintf("https://www.basketball-reference.com%s", e.ChildAttr("td[data-stat='player'] a", "href")),
-			Name:      e.ChildText("th[data-stat='player']"),
+			Name:      e.ChildText("td[data-stat='player']"),
 			From:      e.ChildText("td[data-stat='year_min']"),
 			To:        e.ChildText("td[data-stat='year_max']"),
 		}
