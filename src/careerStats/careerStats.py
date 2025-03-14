@@ -43,7 +43,7 @@ def handler(event, context):
             try:
                 year_stats["player-id"] = "https://www.basketball-reference.com" + tr.find("th").a["href"]
             except TypeError:
-                year_stats["player-id"] = f"{url}-{year_stats["team_name_abbr"]}"
+                year_stats["player-id"] = f"{url}-{year_stats['team_name_abbr']}"
             dynamodb_item = {k: serializer.serialize(v) for k, v in year_stats.items()}
             response = dynamodb_client.put_item(
                 TableName=TABLE,
