@@ -19,11 +19,6 @@ type Player struct {
 	Name      string `dynamodbav:"name"`
 	From      string `dynamodbav:"from_year"`
 	To        string `dynamodbav:"to_year"`
-	Position  string `dynamodbav:"position"`
-	Height    string `dynamodbav:"height"`
-	Weight    string `dynamodbav:"weight"`
-	DOB       string `dynamodbav:"dob"`
-	College   string `dynamodbav:"college"`
 }
 
 // Lambda event structure
@@ -99,7 +94,7 @@ func HandleRequest(ctx context.Context, event MyEvent) (MyResponse, error) {
 	var urls []string
 	playerCount = 0 // Reset count for each invocation
 
-	urls = ["https://www.basketball-reference.com/teams/BOS/players.html"]
+	urls = []string{"https://www.basketball-reference.com/teams/BOS/players.html"}
 
 	var wg sync.WaitGroup
 	var countMutex sync.Mutex
