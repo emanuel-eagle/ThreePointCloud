@@ -32,6 +32,7 @@ def handler(event, context):
         tbody = table.find("tbody")
         for tr in tbody.find_all("tr"):
             td_list = tr.find_all("td")
+            did_not_play = False
             year_stats = {}
             for td in td_list:
                 year_stats[td['data-stat']] = td.text
@@ -39,13 +40,14 @@ def handler(event, context):
             try:
                 year_stats["player-id"] = "https://www.basketball-reference.com" + tr.find("th").a["href"]
             except TypeError:
-                print(year_stats)
-                year_stats["player-id"] = ""
-            dynamodb_item = {k: serializer.serialize(v) for k, v in year_stats.items()}
-            response = dynamodb_client.put_item(
-                TableName=TABLE,
-                Item=dynamodb_item
-            )
+                if "did not play" in year_stats["team_name_abbr"].lower():
+                    did_not_play = True
+            if not did_not_play:
+                dynamodb_item = {k: serializer.serialize(v) for k, v in year_stats.items()}
+                response = dynamodb_client.put_item(
+                    TableName=TABLE,
+                    Item=dynamodb_item
+                )
 
 
     return {
