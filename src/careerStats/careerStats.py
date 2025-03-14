@@ -20,8 +20,6 @@ def handler(event, context):
 
     dynamodb_client = boto3.client("dynamodb")
 
-    team = TABLE.split("-")[0]
-
     urls = event.get('urls', [])
 
     serializer = TypeSerializer()
@@ -47,7 +45,6 @@ def handler(event, context):
             for td in td_list:
                 year_stats[td['data-stat']] = td.text
             year_stats["player-database-key"] = url
-            year_stats["team"] = team
             try:
                 year_stats["player-id"] = "https://www.basketball-reference.com" + tr.find("th").a["href"]
             except TypeError:
