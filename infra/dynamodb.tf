@@ -1,5 +1,5 @@
 resource "aws_dynamodb_table" "dynamodb-table" {
-  name           = "celtics-player-database"
+  name           = "BOS-player-database"
   billing_mode   = "PROVISIONED"
   read_capacity = 1000
   write_capacity = 1000
