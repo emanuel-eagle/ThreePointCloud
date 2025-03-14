@@ -65,6 +65,11 @@ resource "aws_lambda_function" "threepointcloud_careerstats_collection" {
   package_type = var.package_type
   timeout = var.career_stats_lambda_timeout
   memory_size = var.career_stats_lambda_memory_size
+  environment {
+    variables = {
+        TABLE_NAME = aws_dynamodb_table.dynamodb-table-career-data.name
+    }
+  }
 }
 
 resource "aws_lambda_function" "threepointcloud_careerstats_coordinator_collection" {
