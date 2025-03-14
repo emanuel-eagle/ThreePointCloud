@@ -5,4 +5,4 @@
 [Master Diagram](#master-diagram)
 
 ## Master Diagram
-[Alt Text](master-diagram.drawio.png)
+![Alt Text](master-diagram.drawio.png)
