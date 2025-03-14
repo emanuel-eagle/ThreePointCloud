@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"sync"
+	"time"
 
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -19,6 +20,7 @@ type Player struct {
 	Name      string `dynamodbav:"name"`
 	From      string `dynamodbav:"from_year"`
 	To        string `dynamodbav:"to_year"`
+	Active    string `dynamodbav:"active"`
 }
 
 // Lambda event structure
@@ -67,11 +69,17 @@ func getPlayers(url string, ctx context.Context, wg *sync.WaitGroup, countMutex 
 	defer wg.Done()
 	c := colly.NewCollector()
 	c.OnHTML("table#franchise_register tbody tr", func(e *colly.HTMLElement) {
+		active := "False"
+		currentYearString := fmt.Sprintf("%d", time.Now().Year())
+		if e.ChildText("td[data-stat='year_max']") == currentYearString {
+			active = "True"
+		}
 		player := Player{
 			Player_id: fmt.Sprintf("https://www.basketball-reference.com%s", e.ChildAttr("td[data-stat='player'] a", "href")),
 			Name:      e.ChildText("td[data-stat='player']"),
 			From:      e.ChildText("td[data-stat='year_min']"),
 			To:        e.ChildText("td[data-stat='year_max']"),
+			Active:    active,
 		}
 		if player.Name != "" {
 			// Add player to DynamoDB right away
