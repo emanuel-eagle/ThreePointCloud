@@ -1,1 +1,1 @@
-career_stats_lambda_image_tag = "ee4895392e53e619ba2a2f27f4cc7724b4913bcb"
+career_stats_lambda_image_tag = "35f2e07eb5f68c023c4f10348af34e75f4f3adbf"
