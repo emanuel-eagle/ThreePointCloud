@@ -46,7 +46,7 @@ variable lambda_image_tag_careerStatsCoordinatorLambda {
 
 variable chunk_size {
     type = string
-    default = "200"
+    default = "20"
 }
 
 resource "aws_lambda_function" "threepointcloud_playerlist_collection" {
