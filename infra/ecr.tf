@@ -36,3 +36,29 @@ variable "container_repo_name_career_stats_coordinator" {
   type = string
   default = "three-point-cloud-career-stats-coordinator-container-repository"
 } 
+
+resource "aws_ecr_repository" "three-point-cloud-game-stats-collection-container-repository" {
+  name                 = var.container_repo_name_game_stats_collection
+  image_tag_mutability = "MUTABLE"
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+}
+
+variable "container_repo_name_game_stats_collection" {
+  type = string
+  default = "three-point-cloud-game-stats-collection-container-repository"
+} 
+
+resource "aws_ecr_repository" "three-point-cloud-game-stats-coordinator-container-repository" {
+  name                 = var.container_repo_name_game_stats_coordinator
+  image_tag_mutability = "MUTABLE"
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+}
+
+variable "container_repo_name_game_stats_coordinator" {
+  type = string
+  default = "three-point-cloud-game-stats-coordinator-container-repository"
+} 
