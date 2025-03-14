@@ -36,7 +36,11 @@ def handler(event, context):
             for td in td_list:
                 year_stats[td['data-stat']] = td.text
             year_stats["player-database-key"] = url
-            year_stats["player-id"] = "https://www.basketball-reference.com" + tr.find("th").a["href"]    
+            try:
+                year_stats["player-id"] = "https://www.basketball-reference.com" + tr.find("th").a["href"]
+            except TypeError:
+                print(year_stats)
+                year_stats["player-id"] = None
             dynamodb_item = {k: serializer.serialize(v) for k, v in year_stats.items()}
             response = dynamodb_client.put_item(
                 TableName=TABLE,
