@@ -16,6 +16,14 @@ variable lambda_function_name_career_stats_coordinator {
     default = "threepointcloud-careerstats-coordinator"
 }
 
+variable lambda_function_name_game_stats_collection {
+    default = "threepointcloud-gamestats-collection"
+}
+
+variable lambda_function_name_game_stats_collector {
+    default = "threepointcloud-gamestats-coordinator"
+}
+
 variable lambda_timeout {
     default = 120
 }
@@ -43,6 +51,15 @@ variable career_stats_lambda_image_tag {
 variable lambda_image_tag_careerStatsCoordinatorLambda {
     type = string
 }
+
+variable lambda_image_tag_gamelogStats {
+    type = string
+}
+
+variable lambda_image_tag_gamelogCoordinator {
+    type = string
+}
+
 
 variable chunk_size {
     type = string
@@ -84,6 +101,37 @@ resource "aws_lambda_function" "threepointcloud_careerstats_coordinator_collecti
         TABLE_NAME = aws_dynamodb_table.dynamodb-table.name
         HASH_KEY = aws_dynamodb_table.dynamodb-table.hash_key
         CAREER_STATS_LAMBDA = aws_lambda_function.threepointcloud_careerstats_collection.arn
+        CHUNK_SIZE = var.chunk_size
+    }
+  }
+}
+
+resource "aws_lambda_function" "threepointcloud_gamestats_collection" {
+  function_name = var.lambda_function_name_game_stats_collection
+  role          = aws_iam_role.iam_for_lambda.arn
+  image_uri     = "${aws_ecr_repository.three-point-cloud-game-stats-container-repository.repository_url}:${var.lambda_image_tag_gamelogStats}"
+  package_type = var.package_type
+  timeout = var.career_stats_lambda_timeout
+  memory_size = var.career_stats_lambda_memory_size
+  environment {
+    variables = {
+        TABLE_NAME = aws_dynamodb_table.dynamodb-table-gamelog-data.name
+    }
+  }
+}
+
+resource "aws_lambda_function" "threepointcloud_gamestats_collector" {
+  function_name = var.lambda_function_name_game_stats_collector
+  role          = aws_iam_role.iam_for_lambda.arn
+  image_uri     = "${aws_ecr_repository.three-point-cloud-game-stats-coordinator-container-repository.repository_url}:${var.lambda_image_tag_gamelogCoordinator}"
+  package_type = var.package_type
+  timeout = var.career_stats_lambda_timeout
+  memory_size = var.career_stats_lambda_memory_size
+  environment {
+    variables = {
+        TABLE_NAME = aws_dynamodb_table.dynamodb-table-gamelog-data.name
+        HASH_KEY = aws_dynamodb_table.dynamodb-table-gamelog-data.hash_key
+        GAME_STATS_LAMBDA = aws_lambda_function.threepointcloud_gamestats_collection.arn
         CHUNK_SIZE = var.chunk_size
     }
   }
