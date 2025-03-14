@@ -11,7 +11,6 @@ def split_list_into_chunks(items, target_chunk_size=CHUNK_SIZE):
     # Calculate how many chunks we need
     num_chunks = max(1, (len(items) + target_chunk_size - 1) // target_chunk_size)
     
-    # Calculate actual chunk size (distributing items evenly)
     chunk_size = (len(items) + num_chunks - 1) // num_chunks
     
     # Split the list
