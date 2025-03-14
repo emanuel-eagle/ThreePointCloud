@@ -29,13 +29,18 @@ def handler(event, context):
     for url in urls:
         time.sleep(random.random())
         response = requests.get(url, headers = {'User-agent': user_agents[random.randint(0, len(user_agents)-1)]})
-        response_code = response.status_code
+        status_code = response.status_code
+        while status_code == 429:
+            time.sleep(20)
+            print("Retrying")
+            response = requests.get(url, headers = {'User-agent': user_agents[random.randint(0, len(user_agents)-1)]})
+            status_code = response.status_code
         soup = BeautifulSoup(response.text, "html.parser")
         table = soup.find(id = "per_game_stats")
         try:
             tbody = table.find("tbody")
         except AttributeError:
-            print(f"Unable to find tbody: {url}. Status code: {response_code}")
+            print(f"Unable to find tbody: {url}. Status code: {status_code}")
         for tr in tbody.find_all("tr"):
             td_list = tr.find_all("td")
             year_stats = {}
