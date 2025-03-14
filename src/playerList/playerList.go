@@ -53,7 +53,7 @@ func addPlayerToDynamoDB(player Player, ctx context.Context) error {
 
 	// Put the item in DynamoDB
 	_, err = dbClient.PutItem(ctx, &dynamodb.PutItemInput{
-		TableName: aws.String("celtics-player-database"),
+		TableName: aws.String("bos-player-database"),
 		Item:      av,
 	})
 	if err != nil {
