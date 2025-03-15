@@ -68,7 +68,7 @@ variable chunk_size {
 
 variable gamelog_chunk_size {
     type = string
-    default = "200"
+    default = "100"
 }
 
 resource "aws_lambda_function" "threepointcloud_playerlist_collection" {
