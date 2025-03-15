@@ -1,1 +1,1 @@
-lambda_image_tag_gamelogStats = "489fe1f9cfeaf5de7f4edc5d1e51afb425f854b3"
+lambda_image_tag_gamelogStats = "304a8bed08ae03be246bd29565df5f6f7a30f39a"
