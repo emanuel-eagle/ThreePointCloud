@@ -35,7 +35,10 @@ def handler(event, context):
             status_code = response.status_code
         soup = BeautifulSoup(response.text, "html.parser")
         table = soup.find(id = "pgl_basic")
-        tbody = table.find("tbody")
+        try:
+            tbody = table.find("tbody")
+        except AttributeError:
+            print(url)
         for tr in tbody.find_all("tr"):
             td_list = tr.find_all("td")
             game_stats = {}
