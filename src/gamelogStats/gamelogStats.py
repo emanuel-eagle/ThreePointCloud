@@ -20,7 +20,7 @@ def handler(event, context):
 
     dynamodb_client = boto3.client("dynamodb")
 
-    urls = json.loads(event).get('urls', [])
+    urls = event['urls']
 
     serializer = TypeSerializer()
 
