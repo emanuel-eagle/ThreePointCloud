@@ -1,1 +1,1 @@
-lambda_image_tag_gamelogCoordinator = "5f4052e6ebea3b10e988db21a5282137ae52ca6f"
+lambda_image_tag_gamelogCoordinator = "05e33ca6ff2a85233e47046cd55e7a9eae04b70e"
