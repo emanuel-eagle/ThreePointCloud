@@ -28,30 +28,31 @@ def handler(event, context):
         time.sleep(random.random())
         response = requests.get(url, headers = {'User-agent': user_agents[random.randint(0, len(user_agents)-1)]})
         status_code = response.status_code
-        while status_code == 429:
-            time.sleep(20)
-            print("Retrying")
-            response = requests.get(url, headers = {'User-agent': user_agents[random.randint(0, len(user_agents)-1)]})
-            status_code = response.status_code
-        soup = BeautifulSoup(response.text, "html.parser")
-        table = soup.find(id = "pgl_basic")
-        try:
-            tbody = table.find("tbody")
-        except AttributeError:
-            print(url)
-        for tr in tbody.find_all("tr"):
-            td_list = tr.find_all("td")
-            game_stats = {}
-            for td in td_list:
-                game_stats[td['data-stat']] = td.text
-            if game_stats:
-                game_stats["player-database-key"] = url
-                game_stats["game-id"] = f"{url}-{game_stats['date_game']}-{game_stats['age']}"
-                dynamodb_item = {k: serializer.serialize(v) for k, v in game_stats.items()}
-                response = dynamodb_client.put_item(
-                    TableName=TABLE,
-                    Item=dynamodb_item
-                )
+        if status_code != 404:
+            while status_code == 429:
+                time.sleep(60)
+                print("Retrying")
+                response = requests.get(url, headers = {'User-agent': user_agents[random.randint(0, len(user_agents)-1)]})
+                status_code = response.status_code
+            soup = BeautifulSoup(response.text, "html.parser")
+            table = soup.find(id = "pgl_basic")
+            try:
+                tbody = table.find("tbody")
+            except AttributeError:
+                print(url)
+            for tr in tbody.find_all("tr"):
+                td_list = tr.find_all("td")
+                game_stats = {}
+                for td in td_list:
+                    game_stats[td['data-stat']] = td.text
+                if game_stats:
+                    game_stats["player-database-key"] = url
+                    game_stats["game-id"] = f"{url}-{game_stats['date_game']}-{game_stats['age']}"
+                    dynamodb_item = {k: serializer.serialize(v) for k, v in game_stats.items()}
+                    response = dynamodb_client.put_item(
+                        TableName=TABLE,
+                        Item=dynamodb_item
+                    )
 
     return {
         'statusCode': 200,
