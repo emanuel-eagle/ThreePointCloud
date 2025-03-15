@@ -39,6 +39,7 @@ def handler(event, context):
         payload = {
             'urls' : chunk
         }
+        print(payload)
         response = lambda_client.invoke(
             FunctionName = CAREER_STATS_LAMBDA,
             InvocationType = "Event",
